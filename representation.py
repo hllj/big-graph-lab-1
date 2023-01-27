@@ -1,5 +1,6 @@
 import numpy as np
-from .graph import Edge, Vertex
+from graph import Edge, Vertex
+from enum import Enum
 
 class AdjacencyMatrix:
     def __init__(self, input_file):
@@ -103,7 +104,12 @@ class AdjacencyList:
     def del_edge(self, source, target):
         if self.adjacent(source, target):
             self.adjacency_list[source].remove(target)
-            
+
+class VertexMapping:
+    def __init__(self):
+        self._incoming_edges = []
+        self._outcoming_edges = []
+
 class ExtendedAdjacencyList:
     def __init__(self, input_file):
         with open(input_file, 'r') as wf:
@@ -112,9 +118,8 @@ class ExtendedAdjacencyList:
         self.num_vertex = int(lines[0].strip())
         self.adjacency_list = {}
         for i in range(self.num_vertex):
-            self.adjacency_list[i]._incoming_edges = []
-            self.adjacency_list[i]._outcoming_edges = []
-
+            self.adjacency_list[i] = VertexMapping()
+        print(len(self.adjacency_list[0]._outcoming_edges))
         for line in lines[1:]:
             data = line.strip().split(',')
             # blank line
@@ -165,10 +170,10 @@ class ExtendedAdjacencyList:
     def del_edge(self, source, target):
         if self.adjacent(source, target):
             self.adjacency_list[source]._outcoming_edges = [
-                edge for edge in self.adjacency_list[source]._outcoming_edges if edge.target() == target
+                edge for edge in self.adjacency_list[source]._outcoming_edges if edge.target() != target
             ]
             self.adjacency_list[target]._incoming_edges = [
-                edge for edge in self.adjacency_list[target]._incoming_edges if edge.source() == source
+                edge for edge in self.adjacency_list[target]._incoming_edges if edge.source() != source
             ]
             
             
