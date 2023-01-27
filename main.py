@@ -2,7 +2,7 @@ from representation import AdjacencyMatrix, AdjacencyList, ExtendedAdjacencyList
 
 def main():
     input_file = r"./input.txt"
-    adjacency_matrix = ExtendedAdjacencyList(input_file)
+    adjacency_matrix = AdjacencyMap(input_file)
     # adjacency_matrix.print_adjacency_matrix()
     adjacency_matrix.print_edge_list()
     # adjacency_matrix.incoming(2)

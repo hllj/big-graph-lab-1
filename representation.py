@@ -107,8 +107,8 @@ class AdjacencyList:
 
 class VertexMapping:
     def __init__(self):
-        self._incoming_edges = []
-        self._outcoming_edges = []
+        self._incoming_edges = object()
+        self._outcoming_edges = object()
 
 class ExtendedAdjacencyList:
     def __init__(self, input_file):
@@ -119,6 +119,9 @@ class ExtendedAdjacencyList:
         self.adjacency_list = {}
         for i in range(self.num_vertex):
             self.adjacency_list[i] = VertexMapping()
+            self.adjacency_list[i]._incoming_edges = []
+            self.adjacency_list[i]._outcoming_edges = []
+            
         print(len(self.adjacency_list[0]._outcoming_edges))
         for line in lines[1:]:
             data = line.strip().split(',')
@@ -185,6 +188,7 @@ class AdjacencyMap:
         self.num_vertex = int(lines[0].strip())
         self.adjacency_list = {}
         for i in range(self.num_vertex):
+            self.adjacency_list[i] = VertexMapping()
             self.adjacency_list[i]._incoming_edges = {}
             self.adjacency_list[i]._outcoming_edges = {}
 
@@ -219,7 +223,7 @@ class AdjacencyMap:
     def print_edge_list(self):
         print("Edge List:")
         for i in range(self.num_vertex):
-            for edge in self.adjacency_list[i]._outcoming_edges:
+            for edge in self.adjacency_list[i]._outcoming_edges.values():
                 print("( {} , {} )".format(edge.source(), edge.target()))
                 
     def incoming(self, v):
@@ -237,10 +241,10 @@ class AdjacencyMap:
             self.adjacency_list[source]._outcoming_edges = {
                 v: edge
                 for v, edge in self.adjacency_list[source]._outcoming_edges.items()
-                    if edge.target() == target
+                    if edge.target() != target
             }
             self.adjacency_list[target]._incoming_edges = {
                 v: edge 
                 for v, edge in self.adjacency_list[target]._incoming_edges.items() 
-                    if edge.source() == source
+                    if edge.source() != source
             }
