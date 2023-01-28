@@ -1,4 +1,6 @@
 from representation import AdjacencyMatrix, AdjacencyList, ExtendedAdjacencyList, AdjacencyMap
+from graph import Vertex
+
 
 def main():
     input_file = r"./input.txt"
@@ -12,6 +14,7 @@ def main():
 
     # graph = Graph(input_file)
     # graph.print_edge_list()
+    # graph.subgraph_by_high(Vertex(5), high=2)
 
     # input_file = r"./input_words.txt"
     # graph = Graph(input_file)

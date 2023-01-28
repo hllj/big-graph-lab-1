@@ -248,3 +248,12 @@ class AdjacencyMap:
                 for v, edge in self.adjacency_list[target]._incoming_edges.items() 
                     if edge.source() != source
             }
+
+    def subgraph_by_high(self, root, high=1):
+        if high == 0:
+            return
+        v = self._data[root]
+        for w in v._outgoing:
+            e = v._outgoing[w]
+            print("( {} , {} )".format(e.source(), e.target()))
+            self.subgraph_by_high(e.target(), high - 1)
