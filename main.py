@@ -4,7 +4,7 @@ from graph import Vertex
 
 def main():
     input_file = r"./input.txt"
-    adjacency_matrix = ExtendedAdjacencyList(input_file)
+    adjacency_matrix = AdjacencyMap(input_file)
     # adjacency_matrix.print_adjacency_matrix()
     adjacency_matrix.print_edge_list()
     # adjacency_matrix.incoming(2)
@@ -12,7 +12,7 @@ def main():
     adjacency_matrix.del_edge(source=0, target=1)
     adjacency_matrix.print_edge_list()
     adjacency_matrix.del_vertex(5)
-    adjacency_matrix.add_edge(0, 5)
+    # adjacency_matrix.add_edge(0, 5)
     adjacency_matrix.print_edge_list()
 
     # graph = Graph(input_file)
