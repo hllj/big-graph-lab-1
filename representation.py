@@ -2,6 +2,7 @@ import numpy as np
 from graph import Edge, Vertex
 from enum import Enum
 
+
 class AdjacencyMatrix:
     def __init__(self, input_file):
         with open(input_file, 'r') as wf:
@@ -53,6 +54,7 @@ class AdjacencyMatrix:
     def del_edge(self, source, target):
         self.graph[source][target] = 0
 
+
 class AdjacencyList:
     def __init__(self, input_file):
         with open(input_file, 'r') as wf:
@@ -73,21 +75,21 @@ class AdjacencyList:
             targets = line[1:]
             for tg in targets:
                 self.adjacency_list[source].append(tg)
-    
+
     def adjacent(self, u, v):
         return v in self.adjacency_list[u]
-    
+
     def _print(self):
         print("Adjacency List:")
         for i in range(self.num_vertex):
             print(self.adjacency_list[i])
-            
+
     def print_edge_list(self):
         print("Edge List:")
         for i, li in self.adjacency_list.items():
             for j in li:
                 print("( {} , {} )".format(i, j))
-                
+
     def incoming(self, v):
         print("Incoming of {}:".format(v), end=' ')
         for i in range(self.num_vertex):
@@ -105,14 +107,14 @@ class AdjacencyList:
         if u not in self.adjacency_list.keys():
             self.adjacency_list[u] = []
             self.num_vertex += 1
-            
+
     def del_vertex(self, u):
         for vertex, li in self.adjacency_list.items():
             self.adjacency_list[vertex] = [v for v in li if v != u]
         if u in self.adjacency_list:
             self.adjacency_list.pop(u, None)
             self.num_vertex -= 1
-             
+
     def add_edge(self, source, target):
         self.add_vertex(source)
         self.add_vertex(target)
@@ -123,10 +125,12 @@ class AdjacencyList:
         if self.adjacent(source, target):
             self.adjacency_list[source].remove(target)
 
+
 class VertexMapping:
     def __init__(self):
         self._incoming_edges = object()
         self._outcoming_edges = object()
+
 
 class ExtendedAdjacencyList:
     def __init__(self, input_file):
@@ -139,7 +143,7 @@ class ExtendedAdjacencyList:
             self.adjacency_list[i] = VertexMapping()
             self.adjacency_list[i]._incoming_edges = []
             self.adjacency_list[i]._outcoming_edges = []
-            
+
         print(len(self.adjacency_list[0]._outcoming_edges))
         for line in lines[1:]:
             data = line.strip().split(',')
@@ -153,13 +157,13 @@ class ExtendedAdjacencyList:
                 edge = Edge(source, tg, f'{source}->{tg}')
                 self.adjacency_list[source]._outcoming_edges.append(edge)
                 self.adjacency_list[tg]._incoming_edges.append(edge)
-                
+
     def adjacent(self, u, v):
         for edge in self.adjacency_list[u]._outcoming_edges:
             if v == edge.target():
                 return True
         return False
-    
+
     def _print(self):
         print("Extended Adjacency List:")
         for i in range(self.num_vertex):
@@ -171,13 +175,13 @@ class ExtendedAdjacencyList:
             for edge in self.adjacency_list[i]._outcoming_edges:
                 print(edge)
             print()
-            
+
     def print_edge_list(self):
         print("Edge List:")
         for i in self.adjacency_list:
             for edge in self.adjacency_list[i]._outcoming_edges:
                 print("( {} , {} )".format(edge.source(), edge.target()))
-                
+
     def incoming(self, v):
         print("Incoming of {}:".format(v), end=' ')
         for edge in self.adjacency_list[v]._incoming_edges:
@@ -194,7 +198,7 @@ class ExtendedAdjacencyList:
             self.adjacency_list[u]._incoming_edges = []
             self.adjacency_list[u]._outcoming_edges = []
             self.num_vertex += 1
-            
+
     def del_vertex(self, u):
         for vertex in self.adjacency_list:
             self.del_edge(vertex, u)
@@ -202,7 +206,7 @@ class ExtendedAdjacencyList:
         if u in self.adjacency_list:
             self.adjacency_list.pop(u, None)
             self.num_vertex -= 1
-    
+
     def add_edge(self, source, target):
         self.add_vertex(source)
         self.add_vertex(target)
@@ -210,7 +214,7 @@ class ExtendedAdjacencyList:
             edge = Edge(source, target, f'{source}->{target}')
             self.adjacency_list[source]._outcoming_edges.append(edge)
             self.adjacency_list[target]._incoming_edges.append(edge)
-    
+
     def del_edge(self, source, target):
         if self.adjacent(source, target):
             self.adjacency_list[source]._outcoming_edges = [
@@ -219,8 +223,8 @@ class ExtendedAdjacencyList:
             self.adjacency_list[target]._incoming_edges = [
                 edge for edge in self.adjacency_list[target]._incoming_edges if edge.source() != source
             ]
-            
-            
+
+
 class AdjacencyMap:
     def __init__(self, input_file):
         with open(input_file, 'r') as wf:
@@ -228,30 +232,34 @@ class AdjacencyMap:
 
         self.num_vertex = int(lines[0].strip())
         self.adjacency_list = {}
-        for i in range(self.num_vertex):
-            self.adjacency_list[i] = VertexMapping()
-            self.adjacency_list[i]._incoming_edges = {}
-            self.adjacency_list[i]._outcoming_edges = {}
-
         for line in lines[1:]:
             data = line.strip().split(',')
             # blank line
             if data[0] == '':
                 continue
-            line = list(map(int, data))
-            source = line[0]
-            targets = line[1:]
+            # line = list(map(int, data))
+            source = data[0]
+            targets = data[1:]
+
+            if source not in self.adjacency_list:
+                self.adjacency_list[source] = VertexMapping()
+                self.adjacency_list[source]._incoming_edges = {}
+                self.adjacency_list[source]._outcoming_edges = {}
             for tg in targets:
+                if tg not in self.adjacency_list:
+                    self.adjacency_list[tg] = VertexMapping()
+                    self.adjacency_list[tg]._incoming_edges = {}
+                    self.adjacency_list[tg]._outcoming_edges = {}
                 edge = Edge(source, tg, f'{source}->{tg}')
                 self.adjacency_list[source]._outcoming_edges[tg] = edge
                 self.adjacency_list[tg]._incoming_edges[source] = edge
-                
+
     def adjacent(self, u, v):
         return v in self.adjacency_list[u]._outcoming_edges
-    
+
     def _print(self):
         print("Adjacency Map:")
-        for i in range(self.num_vertex):
+        for i in self.adjacency_list.keys():
             print(f'Incoming to Vertex {i}:', end='')
             for edge in self.adjacency_list[i]._incoming_edges:
                 print(edge)
@@ -260,13 +268,13 @@ class AdjacencyMap:
             for edge in self.adjacency_list[i]._outcoming_edges:
                 print(edge)
             print()
-            
+
     def print_edge_list(self):
         print("Edge List:")
-        for i in range(self.num_vertex):
+        for i in self.adjacency_list.keys():
             for edge in self.adjacency_list[i]._outcoming_edges.values():
                 print("( {} , {} )".format(edge.source(), edge.target()))
-                
+
     def incoming(self, v):
         print("Incoming of {}:".format(v), end=' ')
         for edge in self.adjacency_list[v]._incoming_edges:
@@ -283,7 +291,7 @@ class AdjacencyMap:
             self.adjacency_list[u]._incoming_edges = {}
             self.adjacency_list[u]._outcoming_edges = {}
             self.num_vertex += 1
-            
+
     def del_vertex(self, u):
         for vertex in self.adjacency_list:
             self.del_edge(vertex, u)
@@ -291,7 +299,7 @@ class AdjacencyMap:
         if u in self.adjacency_list:
             self.adjacency_list.pop(u, None)
             self.num_vertex -= 1
-    
+
     def add_edge(self, source, target):
         self.add_vertex(source)
         self.add_vertex(target)
@@ -299,25 +307,25 @@ class AdjacencyMap:
             edge = Edge(source, target, f'{source}->{target}')
             self.adjacency_list[source]._outcoming_edges[target] = edge
             self.adjacency_list[target]._incoming_edges[source] = edge
-    
+
     def del_edge(self, source, target):
         if self.adjacent(source, target):
             self.adjacency_list[source]._outcoming_edges = {
                 v: edge
                 for v, edge in self.adjacency_list[source]._outcoming_edges.items()
-                    if edge.target() != target
+                if edge.target() != target
             }
             self.adjacency_list[target]._incoming_edges = {
-                v: edge 
-                for v, edge in self.adjacency_list[target]._incoming_edges.items() 
-                    if edge.source() != source
+                v: edge
+                for v, edge in self.adjacency_list[target]._incoming_edges.items()
+                if edge.source() != source
             }
 
     def subgraph_by_high(self, root, high=1):
         if high == 0:
             return
-        v = self._data[root]
-        for w in v._outgoing:
-            e = v._outgoing[w]
+        v = self.adjacency_list[root]
+        for w in v._outcoming_edges:
+            e = v._outcoming_edges[w]
             print("( {} , {} )".format(e.source(), e.target()))
             self.subgraph_by_high(e.target(), high - 1)
